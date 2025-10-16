@@ -96,7 +96,6 @@
   .event-year{ color:var(--muted); font-size:.9rem; }
 
   @media (max-width:768px){
-    header h1 { font-size:2rem; }
     .timeline-line{ left:28px; transform:none; }
     .timeline-dot{ left:28px; transform:none; }
     .timeline-content{ width:calc(100% - 96px); margin-left:72px !important; text-align:left !important; }
@@ -104,7 +103,7 @@
   }
 
   /* Modal */
-  #event-modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:60; padding:1rem; }
+  #event-modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:60; padding:1rem; overflow:auto; }
   #event-modal.open{ display:flex; }
   .modal-panel{
     width:100%; max-width:880px; background:var(--card); border-radius:0.75rem; padding:1.25rem; border:2px solid rgba(248,113,113,0.12);
@@ -186,8 +185,7 @@ const modalYear = document.getElementById('modal-year');
 const modalBody = document.getElementById('modal-body');
 const modalVideoRoot = document.getElementById('modal-video-root');
 const triviaArea = document.getElementById('trivia-area');
-const apiKey = ""; // opcional
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
 const localTriviaBank = {
   "1945":["¿Qué dos grandes potencias emergieron tras la Segunda Guerra Mundial?","Estados Unidos y la Unión Soviética."],
   "1947":["¿Qué marcó el inicio formal de la confrontación entre bloques en 1947?","La consolidación de doctrinas y políticas de contención entre EE. UU. y la URSS."],
@@ -228,10 +226,8 @@ function createTimelineItem(ev, idx){
 
   const content = document.createElement('div');
   content.className = 'timeline-content';
-  content.innerHTML = `
-    <div class="event-title"><span style="font-size:1.1rem">${ev.icon}</span><span style="margin-left:.35rem">${ev.title}</span></div>
-    <div class="event-year">${ev.year}</div>
-  `;
+  content.innerHTML = `<div class="event-title"><span style="font-size:1.1rem">${ev.icon}</span><span style="margin-left:.35rem">${ev.title}</span></div>
+                       <div class="event-year">${ev.year}</div>`;
   content.onclick = () => openModal(ev);
 
   const dot = document.createElement('div');
@@ -246,7 +242,7 @@ function createTimelineItem(ev, idx){
 
 function renderTimeline(){
   const container = document.getElementById('timeline-container');
-  events.forEach((ev, i) => container.appendChild(createTimelineItem(ev, i)));
+  events.forEach((ev,i) => container.appendChild(createTimelineItem(ev,i)));
 }
 
 function openModal(ev){
@@ -258,89 +254,81 @@ function openModal(ev){
   const embed = toYouTubeEmbed(ev.videoUrl);
   if(embed){
     const iframe = document.createElement('iframe');
-    iframe.width = '100%';
-    iframe.height = '420';
-    iframe.src = embed;
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    iframe.allowFullscreen = true;
-    iframe.style.border = '0';
-    iframe.style.aspectRatio = '16/9';
+    iframe.width='100%';
+    iframe.height='420';
+    iframe.src=embed;
+    iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen=true;
+    iframe.style.border='0';
     modalVideoRoot.appendChild(iframe);
   } else {
     const placeholder = document.createElement('p');
-    placeholder.className = 'video-placeholder';
-    placeholder.textContent = '🎥 Aquí irá el video o enlace correspondiente al evento';
+    placeholder.className='video-placeholder';
+    placeholder.textContent='🎥 Aquí irá el video o enlace correspondiente al evento';
     modalVideoRoot.appendChild(placeholder);
   }
 
-  triviaArea.innerHTML = '';
+  triviaArea.innerHTML='';
   modal.classList.add('open');
 }
 
-function closeModal(){
-  modal.classList.remove('open');
-}
+function closeModal(){ modal.classList.remove('open'); }
 
-async function generateTrivia(){
+function generateTrivia(){
   triviaArea.innerHTML = '<div class="loader"></div><p style="text-align:center; color:var(--muted); margin-top:.5rem;">Generando pregunta...</p>';
   const yearKey = modalYear.textContent.replace('Año: ','').trim();
   const eventTitle = modalTitle.textContent.trim();
   const eventDesc = modalBody.textContent.trim();
 
-  if(!apiKey){
-    await new Promise(r=>setTimeout(r,600));
+  setTimeout(()=>{
     const pair = localTriviaBank[yearKey] || [`Reflexiona sobre: ${eventTitle}`, ''];
     showTrivia(pair[0], pair[1]);
-    return;
-  }
-
-  const prompt = `Eres un historiador. Genera UNA pregunta de trivia concisa sobre el siguiente evento y en la línea siguiente la respuesta empezando con "RESPUESTA:".\n\nEvento: ${eventTitle} (${yearKey})\nDescripción: ${eventDesc}\n\nFormato:\nPregunta: ...\nRESPUESTA: ...`;
-
-  try{
-    const payload = { contents:[{ parts:[{ text: prompt }] }] };
-    const res = await fetch(apiUrl, {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const json = await res.json();
-    const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if(!text) throw new Error('Respuesta vacía del LLM');
-    const [pre, post] = text.split(/RESPUESTA:/i);
-    const pregunta = (pre || text).replace(/^Pregunta:\s*/i,'').trim();
-    const respuesta = post ? post.trim() : '(Sin respuesta disponible)';
-    showTrivia(pregunta, respuesta);
-  } catch(err){
-    console.warn('Error LLM, usando fallback local:', err);
-    const pair = localTriviaBank[yearKey] || [`Reflexiona sobre: ${eventTitle}`, ''];
-    showTrivia(pair[0], pair[1]);
-  }
+  },500);
 }
 
 function showTrivia(pregunta, respuesta){
-  triviaArea.innerHTML = `
-    <p style="color:var(--accent); font-weight:700; margin-bottom:6px">PREGUNTA CLASIFICADA:</p>
-    <p style="color:#e6eef5; margin-bottom:8px">${pregunta}</p>
-    <button class="btn" id="show-answer-btn">VERIFICAR RESPUESTA (ALERTA ROJA)</button>
-    <p id="trivia-answer" style="color:#7ee787; font-weight:700; margin-top:8px; display:none;"></p>
-  `;
+  triviaArea.innerHTML='';
 
-  const btn = document.getElementById('show-answer-btn');
-  const ansEl = document.getElementById('trivia-answer');
+  const tituloEl = document.createElement('p');
+  tituloEl.style.color='var(--accent)';
+  tituloEl.style.fontWeight='700';
+  tituloEl.style.marginBottom='6px';
+  tituloEl.textContent='PREGUNTA CLASIFICADA:';
 
-  const revealAnswer = (e) => {
+  const preguntaEl = document.createElement('p');
+  preguntaEl.style.color='#e6eef5';
+  preguntaEl.style.marginBottom='8px';
+  preguntaEl.textContent=pregunta;
+
+  const btn = document.createElement('button');
+  btn.className='btn';
+  btn.textContent='VERIFICAR RESPUESTA (ALERTA ROJA)';
+
+  const respuestaEl = document.createElement('p');
+  respuestaEl.style.color='#7ee787';
+  respuestaEl.style.fontWeight='700';
+  respuestaEl.style.marginTop='8px';
+  respuestaEl.style.display='none';
+
+  triviaArea.appendChild(tituloEl);
+  triviaArea.appendChild(preguntaEl);
+  triviaArea.appendChild(btn);
+  triviaArea.appendChild(respuestaEl);
+
+  function revealAnswer(e){
     e.preventDefault();
-    ansEl.textContent = 'RESPUESTA: ' + respuesta;
-    ansEl.style.display = 'block';
-    btn.style.display = 'none';
-  };
+    respuestaEl.textContent='RESPUESTA: ' + respuesta;
+    respuestaEl.style.display='block';
+    btn.style.display='none';
+  }
 
   btn.addEventListener('click', revealAnswer);
   btn.addEventListener('touchstart', revealAnswer);
 }
 
 window.addEventListener('load', renderTimeline);
-window.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
 </script>
 </body>
 </html>
+
