@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🕊️⚔️☭ LÍNEA DE TIEMPO: GUERRA FRÍA 🦅🌎</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
@@ -95,29 +95,12 @@
   .event-title{ color:var(--accent); font-weight:700; font-size:1.05rem; margin-bottom:.25rem; display:flex; align-items:center; gap:.5rem; justify-content:flex-start; }
   .event-year{ color:var(--muted); font-size:.9rem; }
 
-  /* RESPONSIVE MÓVIL */
   @media (max-width:768px){
     header h1 { font-size:2rem; }
-
-    .timeline-line{ left:32px; transform:none; }
-    .timeline-dot{ left:32px; width:36px; height:36px; transform:none; }
-    .timeline-content{
-      width:calc(100% - 64px);
-      margin-left:48px !important;
-      text-align:left !important;
-      font-size:0.9rem;
-      padding:.8rem;
-    }
-    .item-left .timeline-content, .item-right .timeline-content{
-      order:1; margin-left:48px !important; margin-right:0 !important;
-    }
-
-    .modal-panel{
-      max-width:95%;
-      max-height:90vh;
-      padding:1rem;
-    }
-    iframe{ width:100%; max-height:400px; aspect-ratio:16/9; border:0; }
+    .timeline-line{ left:28px; transform:none; }
+    .timeline-dot{ left:28px; transform:none; }
+    .timeline-content{ width:calc(100% - 96px); margin-left:72px !important; text-align:left !important; }
+    .item-left .timeline-content, .item-right .timeline-content { order:1; margin-left:72px !important; margin-right:0 !important; }
   }
 
   /* Modal */
@@ -134,7 +117,9 @@
   .video-placeholder { color:var(--muted); font-style:italic; margin-bottom:.6rem; text-align:center; }
 
   .trivia-box{ background:#0b1220; border:1px solid rgba(255,255,255,0.03); padding:.75rem; border-radius:.5rem; margin-top:.6rem; }
-  .btn { background:var(--accent); color:white; padding:.5rem .9rem; border-radius:.5rem; cursor:pointer; border:none; font-weight:700; }
+  .btn {
+    background:var(--accent); color:white; padding:.5rem .9rem; border-radius:.5rem; cursor:pointer; border:none; font-weight:700;
+  }
   .btn:hover{ background:#ef4444; }
 
   .loader{ border:4px solid rgba(255,255,255,0.12); border-top:4px solid var(--accent); border-radius:50%; width:28px; height:28px; animation:spin 1s linear infinite; margin:0.5rem auto; }
@@ -151,6 +136,7 @@
 
 <main id="timeline-container">
   <div class="timeline-line"></div>
+  <!-- Items inyectados por JS -->
 </main>
 
 <!-- MODAL -->
@@ -179,27 +165,44 @@
 </div>
 
 <script>
-/* ---------------------------
-   DATOS DE EVENTOS
-----------------------------*/
 const events = [
-  {id:1, year:"1945", title:"Fin de la Segunda Guerra Mundial", description:`Tras la rendición de Alemania y Japón, el mundo quedó dominado por dos grandes potencias: Estados Unidos y la Unión Soviética. Las diferencias políticas y económicas entre ambos comenzaron a dibujar las zonas de influencia que darían paso al periodo llamado Guerra Fría.`, videoUrl:"https://www.youtube.com/watch?v=I3DaaXP0VDA?si=xatJKBsY-fchsPVy", icon:"🌍"},
-  {id:2, year:"1947", title:"Inicio de la Guerra Fría: Doctrina Truman", description:`En 1947 las tensiones se consolidaron: doctrinas, ayudas económicas y enfrentamientos indirectos marcaron la confrontación entre los bloques liderados por EE. UU. y la URSS. Ese mismo año, el presidente Harry S. Truman proclamó la Doctrina Truman, una política destinada a contener la expansión del comunismo mediante el apoyo económico y militar a los países amenazados por la influencia soviética.`, videoUrl:"https://www.youtube.com/watch?v=ZHCH4DD5V2s?si=HqUeMKS3KEbobWLM", icon:"⚔️"},
-  {id:3, year:"1948", title:"Plan Marshall", description:`El Plan Marshall fue la gran iniciativa estadounidense para reconstruir Europa Occidental tras la guerra mediante ayuda económica. Además de levantar economías devastadas, buscaba consolidar gobiernos prooccidentales y frenar la expansión comunista en la región.`, videoUrl:"https://www.youtube.com/watch?v=GAXkXoNv3UY?si=9QVLu_afRCBPXpBi", icon:"💰"},
-  {id:4, year:"1949", title:"Formación de la OTAN", description:`La creación de la OTAN constituyó una alianza militar defensiva entre Estados Unidos, Canadá y naciones de Europa Occidental. Su propósito central: defensa colectiva frente a agresiones y consolidación de un frente común ante el bloque soviético.`, videoUrl:"https://www.youtube.com/watch?v=aF_cBDCw6-s?si=3PpDXAAs-EuNRGbX", icon:"🛡️"},
-  {id:5, year:"1955", title:"Pacto de Varsovia", description:`Como respuesta a la OTAN, la Unión Soviética y sus estados satélites formalizaron el Pacto de Varsovia. Fue la contraparte militar del bloque oriental y consolidó la división político-militar de Europa en dos alianzas enfrentadas.`, videoUrl:"https://www.youtube.com/watch?v=S-kATUPlaMs?si=c2KEOau0WJiBJbGg", icon:"⚒️"},
-  {id:6, year:"1950-1953", title:"Guerra de Corea", description:`El conflicto en la península coreana enfrentó al Norte (apoyado por la URSS y China) contra el Sur (apoyado por EE. UU. y fuerzas de la ONU). Finalizó en un armisticio que dejó la península dividida, consolidando la confrontación regional dentro del contexto global de la Guerra Fría.`, videoUrl:"https://www.youtube.com/watch?v=1wve7tGKI78?si=WBppRN0oWF0uDgPc", icon:"🪖"},
-  {id:7, year:"1955-1975", title:"Guerra de Vietnam", description:`Un conflicto prolongado que enfrentó al gobierno de Vietnam del Sur (apoyado por EE. UU.) y al Viet Cong y Vietnam del Norte (con apoyo comunista). Fue un ejemplo de guerra por poder en la Guerra Fría, con grandes consecuencias humanas y políticas.`, videoUrl:"https://www.youtube.com/watch?v=BF0zfeFgRZ0?si=HNAa_18Z33ORO1fz", icon:"🌿"},
-  {id:8, year:"1962", title:"Crisis de los Misiles en Cuba", description:`El descubrimiento de misiles soviéticos emplazados en Cuba provocó una confrontación directa entre EE. UU. y la URSS que duró 13 días. La crisis terminó con un acuerdo de retirada de misiles y enseñó la necesidad de canales de comunicación para evitar un conflicto nuclear.`, videoUrl:"https://www.youtube.com/watch?v=_3aQ5DDAujA?si=2wwJEk570VoPI_n6", icon:"☢️"},
-  {id:9, year:"1979-1989", title:"Invasión Soviética de Afganistán", description:`La intervención soviética en Afganistán se convirtió en un costoso conflicto de desgaste. Apoyos externos, guerrillas y la prolongación del combate contribuyeron al debilitamiento económico y político de la URSS.`, videoUrl:"https://www.youtube.com/watch?v=PwVp2K2Hgww?si=RWyaXOqWgJUCvf", icon:"⛰"},
-  {id:10, year:"1969", title:"Carrera Espacial", description:`La competencia científica y tecnológica incluyó la carrera espacial. El hito más conocido fue la llegada del ser humano a la Luna (Apolo 11), un triunfo propagandístico y técnico para Estados Unidos dentro de la rivalidad con la URSS.`, videoUrl:"https://www.youtube.com/watch?v=MhPs5kRjqq4?si=1BYkK3x8QFM4nSZ7", icon:"🚀"},
-  {id:11, year:"1989", title:"Caída del Muro de Berlín", description:`La apertura de fronteras y la presión popular derivaron en la caída del Muro de Berlín, símbolo de la división europea. Este suceso marcó el principio del colapso de los regímenes comunistas en Europa del Este.`, videoUrl:"https://www.youtube.com/watch?v=sQxT-oKkuko?si=Z-IGVe0iQOA2-AxI", icon:"🧱"},
-  {id:12, year:"1991", title:"Fin de la Guerra Fría / Disolución de la URSS", description:`La fragmentación de la Unión Soviética en repúblicas independientes, junto a las crisis económicas y políticas internas, supuso el fin del enfrentamiento bipolar y la consolidación de un nuevo orden internacional.`, videoUrl:"https://www.youtube.com/watch?v=wJS0enz-uCI?si=vngSTrdV1M4O6Dke", icon:"🕊️"}
+  {id:1, year:"1945", title:"Fin de la Segunda Guerra Mundial", description:"Tras la rendición de Alemania y Japón, el mundo quedó dominado por dos grandes potencias: Estados Unidos y la Unión Soviética. Las diferencias políticas y económicas entre ambos comenzaron a dibujar las zonas de influencia que darían paso al periodo llamado Guerra Fría.", videoUrl:"https://www.youtube.com/watch?v=I3DaaXP0VDA?si=xatJKBsY-fchsPVy", icon:"🌍"},
+  {id:2, year:"1947", title:"Inicio de la Guerra Fría: Doctrina Truman", description:"En 1947 las tensiones se consolidaron: doctrinas, ayudas económicas y enfrentamientos indirectos marcaron la confrontación entre los bloques liderados por EE. UU. y la URSS. Ese mismo año, el presidente Harry S. Truman proclamó la Doctrina Truman, una política destinada a contener la expansión del comunismo mediante el apoyo económico y militar a los países amenazados por la influencia soviética.", videoUrl:"https://www.youtube.com/watch?v=ZHCH4DD5V2s?si=HqUeMKS3KEbobWLM", icon:"⚔️"},
+  {id:3, year:"1948", title:"Plan Marshall", description:"El Plan Marshall fue la gran iniciativa estadounidense para reconstruir Europa Occidental tras la guerra mediante ayuda económica. Además de levantar economías devastadas, buscaba consolidar gobiernos prooccidentales y frenar la expansión comunista en la región.", videoUrl:"https://www.youtube.com/watch?v=GAXkXoNv3UY?si=9QVLu_afRCBPXpBi", icon:"💰"},
+  {id:4, year:"1949", title:"Formación de la OTAN", description:"La creación de la OTAN constituyó una alianza militar defensiva entre Estados Unidos, Canadá y naciones de Europa Occidental. Su propósito central: defensa colectiva frente a agresiones y consolidación de un frente común ante el bloque soviético.", videoUrl:"https://www.youtube.com/watch?v=aF_cBDCw6-s?si=3PpDXAAs-EuNRGbX", icon:"🛡️"},
+  {id:5, year:"1955", title:"Pacto de Varsovia", description:"Como respuesta a la OTAN, la Unión Soviética y sus estados satélites formalizaron el Pacto de Varsovia. Fue la contraparte militar del bloque oriental y consolidó la división político-militar de Europa en dos alianzas enfrentadas.", videoUrl:"https://www.youtube.com/watch?v=S-kATUPlaMs?si=c2KEOau0WJiBJbGg", icon:"⚒️"},
+  {id:6, year:"1950-1953", title:"Guerra de Corea", description:"El conflicto en la península coreana enfrentó al Norte (apoyado por la URSS y China) contra el Sur (apoyado por EE. UU. y fuerzas de la ONU). Finalizó en un armisticio que dejó la península dividida, consolidando la confrontación regional dentro del contexto global de la Guerra Fría.", videoUrl:"https://www.youtube.com/watch?v=1wve7tGKI78?si=WBppRN0oWF0uDgPc", icon:"🪖"},
+  {id:7, year:"1955-1975", title:"Guerra de Vietnam", description:"Un conflicto prolongado que enfrentó al gobierno de Vietnam del Sur (apoyado por EE. UU.) y al Viet Cong y Vietnam del Norte (con apoyo comunista). Fue un ejemplo de guerra por poder en la Guerra Fría, con grandes consecuencias humanas y políticas.", videoUrl:"https://www.youtube.com/watch?v=BF0zfeFgRZ0?si=HNAa_18Z33ORO1fz", icon:"🌿"},
+  {id:8, year:"1962", title:"Crisis de los Misiles en Cuba", description:"El descubrimiento de misiles soviéticos emplazados en Cuba provocó una confrontación directa entre EE. UU. y la URSS que duró 13 días. La crisis terminó con un acuerdo de retirada de misiles y enseñó la necesidad de canales de comunicación para evitar un conflicto nuclear.", videoUrl:"https://www.youtube.com/watch?v=_3aQ5DDAujA?si=2wwJEk570VoPI_n6", icon:"☢️"},
+  {id:9, year:"1979-1989", title:"Invasión Soviética de Afganistán", description:"La intervención soviética en Afganistán se convirtió en un costoso conflicto de desgaste. Apoyos externos, guerrillas y la prolongación del combate contribuyeron al debilitamiento económico y político de la URSS.", videoUrl:"https://www.youtube.com/watch?v=PwVp2K2Hgww?si=RWyaXOqWgJUCvf", icon:"⛰"},
+  {id:10, year:"1969", title:"Carrera Espacial", description:"La competencia científica y tecnológica incluyó la carrera espacial. El hito más conocido fue la llegada del ser humano a la Luna (Apolo 11), un triunfo propagandístico y técnico para Estados Unidos dentro de la rivalidad con la URSS.", videoUrl:"https://www.youtube.com/watch?v=MhPs5kRjqq4?si=1BYkK3x8QFM4nSZ7", icon:"🚀"},
+  {id:11, year:"1989", title:"Caída del Muro de Berlín", description:"La apertura de fronteras y la presión popular derivaron en la caída del Muro de Berlín, símbolo de la división europea. Este suceso marcó el principio del colapso de los regímenes comunistas en Europa del Este.", videoUrl:"https://www.youtube.com/watch?v=sQxT-oKkuko?si=Z-IGVe0iQOA2-AxI", icon:"🧱"},
+  {id:12, year:"1991", title:"Fin de la Guerra Fría / Disolución de la URSS", description:"La fragmentación de la Unión Soviética en repúblicas independientes, junto a las crisis económicas y políticas internas, supuso el fin del enfrentamiento bipolar y la consolidación de un nuevo orden internacional.", videoUrl:"https://www.youtube.com/watch?v=wJS0enz-uCI?si=vngSTrdV1M4O6Dke", icon:"🕊️"}
 ];
 
-/* ---------------------------
-   Utilidades
-----------------------------*/
+const modal = document.getElementById('event-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalYear = document.getElementById('modal-year');
+const modalBody = document.getElementById('modal-body');
+const modalVideoRoot = document.getElementById('modal-video-root');
+const triviaArea = document.getElementById('trivia-area');
+const apiKey = ""; // opcional
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+const localTriviaBank = {
+  "1945":["¿Qué dos grandes potencias emergieron tras la Segunda Guerra Mundial?","Estados Unidos y la Unión Soviética."],
+  "1947":["¿Qué marcó el inicio formal de la confrontación entre bloques en 1947?","La consolidación de doctrinas y políticas de contención entre EE. UU. y la URSS."],
+  "1948":["¿Cuál era el propósito principal del Plan Marshall?","Reconstruir Europa Occidental y frenar la expansión comunista."],
+  "1949":["¿Qué buscaba la creación de la OTAN?","Defensa colectiva entre países occidentales."],
+  "1955":["¿Qué representó el Pacto de Varsovia?","La alianza militar del bloque oriental como respuesta a la OTAN."],
+  "1950-1953":["¿Qué dejó la Guerra de Corea?","Un armisticio y la división permanente de la península."],
+  "1955-1975":["¿Qué característica definió a la Guerra de Vietnam?","Fue una guerra por poder entre bloques ideológicos con gran coste humano."],
+  "1962":["¿Qué enseñó la Crisis de los Misiles en Cuba?","La importancia de canales directos de comunicación para evitar la escalada nuclear."],
+  "1979-1989":["¿Qué efecto tuvo la intervención en Afganistán sobre la URSS?","Contribuyó a su desgaste político y económico."],
+  "1969":["¿Qué simbolizó la llegada del hombre a la Luna?","Un triunfo tecnológico y propagandístico en la competencia entre bloques."],
+  "1989":["¿Por qué es simbólica la caída del Muro de Berlín?","Porque representó el fin de la división entre Este y Oeste en Europa."],
+  "1991":["¿Qué implicó la disolución de la URSS?","El final oficial de la Guerra Fría y un reordenamiento político internacional."]
+};
+
 function toYouTubeEmbed(url){
   if(!url) return null;
   try{
@@ -215,9 +218,7 @@ function toYouTubeEmbed(url){
       return 'https://www.youtube.com/embed/' + id + (si ? '?si=' + encodeURIComponent(si) : '');
     }
     return null;
-  }catch(e){
-    return null;
-  }
+  }catch(e){ return null; }
 }
 
 function createTimelineItem(ev, idx){
@@ -248,48 +249,22 @@ function renderTimeline(){
   events.forEach((ev, i) => container.appendChild(createTimelineItem(ev, i)));
 }
 
-/* ---------------------------
-   Modal + Trivia
-----------------------------*/
-const modal = document.getElementById('event-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalYear = document.getElementById('modal-year');
-const modalBody = document.getElementById('modal-body');
-const modalVideoRoot = document.getElementById('modal-video-root');
-const triviaArea = document.getElementById('trivia-area');
-
-/* Banco local de preguntas (respaldo) */
-const localTriviaBank = {
-  "1945":["¿Qué dos grandes potencias emergieron tras la Segunda Guerra Mundial?","Estados Unidos y la Unión Soviética."],
-  "1947":["¿Qué marcó el inicio formal de la confrontación entre bloques en 1947?","La consolidación de doctrinas y políticas de contención entre EE. UU. y la URSS."],
-  "1948":["¿Cuál era el propósito principal del Plan Marshall?","Reconstruir Europa Occidental y frenar la expansión comunista."],
-  "1949":["¿Qué buscaba la creación de la OTAN?","Defensa colectiva entre países occidentales."],
-  "1955":["¿Qué representó el Pacto de Varsovia?","La alianza militar del bloque oriental como respuesta a la OTAN."],
-  "1950-1953":["¿Qué dejó la Guerra de Corea?","Un armisticio y la división permanente de la península."],
-  "1955-1975":["¿Qué característica definió a la Guerra de Vietnam?","Fue una guerra por poder entre bloques ideológicos con gran coste humano."],
-  "1962":["¿Qué enseñó la Crisis de los Misiles en Cuba?","La importancia de canales directos de comunicación para evitar la escalada nuclear."],
-  "1979-1989":["¿Qué efecto tuvo la intervención en Afganistán sobre la URSS?","Contribuyó a su desgaste político y económico."],
-  "1969":["¿Qué simbolizó la llegada del hombre a la Luna?","Un triunfo tecnológico y propagandístico en la competencia entre bloques."],
-  "1989":["¿Por qué es simbólica la caída del Muro de Berlín?","Porque representó el fin de la división entre Este y Oeste en Europa."],
-  "1991":["¿Qué implicó la disolución de la URSS?","El final oficial de la Guerra Fría y un reordenamiento político internacional."]
-};
-
 function openModal(ev){
   modalTitle.innerHTML = `<span style="font-size:1.2rem">${ev.icon}</span><span>${ev.title}</span>`;
   modalYear.textContent = 'Año: ' + ev.year;
   modalBody.textContent = ev.description;
 
-  // Video
   modalVideoRoot.innerHTML = '';
   const embed = toYouTubeEmbed(ev.videoUrl);
   if(embed){
     const iframe = document.createElement('iframe');
-    iframe.style.width = '100%';
-    iframe.style.maxHeight = '400px';
-    iframe.style.aspectRatio = '16/9';
+    iframe.width = '100%';
+    iframe.height = '420';
     iframe.src = embed;
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true;
+    iframe.style.border = '0';
+    iframe.style.aspectRatio = '16/9';
     modalVideoRoot.appendChild(iframe);
   } else {
     const placeholder = document.createElement('p');
@@ -302,10 +277,70 @@ function openModal(ev){
   modal.classList.add('open');
 }
 
-function closeModal(){ modal.classList.remove('open'); }
+function closeModal(){
+  modal.classList.remove('open');
+}
+
+async function generateTrivia(){
+  triviaArea.innerHTML = '<div class="loader"></div><p style="text-align:center; color:var(--muted); margin-top:.5rem;">Generando pregunta...</p>';
+  const yearKey = modalYear.textContent.replace('Año: ','').trim();
+  const eventTitle = modalTitle.textContent.trim();
+  const eventDesc = modalBody.textContent.trim();
+
+  if(!apiKey){
+    await new Promise(r=>setTimeout(r,600));
+    const pair = localTriviaBank[yearKey] || [`Reflexiona sobre: ${eventTitle}`, ''];
+    showTrivia(pair[0], pair[1]);
+    return;
+  }
+
+  const prompt = `Eres un historiador. Genera UNA pregunta de trivia concisa sobre el siguiente evento y en la línea siguiente la respuesta empezando con "RESPUESTA:".\n\nEvento: ${eventTitle} (${yearKey})\nDescripción: ${eventDesc}\n\nFormato:\nPregunta: ...\nRESPUESTA: ...`;
+
+  try{
+    const payload = { contents:[{ parts:[{ text: prompt }] }] };
+    const res = await fetch(apiUrl, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(!text) throw new Error('Respuesta vacía del LLM');
+    const [pre, post] = text.split(/RESPUESTA:/i);
+    const pregunta = (pre || text).replace(/^Pregunta:\s*/i,'').trim();
+    const respuesta = post ? post.trim() : '(Sin respuesta disponible)';
+    showTrivia(pregunta, respuesta);
+  } catch(err){
+    console.warn('Error LLM, usando fallback local:', err);
+    const pair = localTriviaBank[yearKey] || [`Reflexiona sobre: ${eventTitle}`, ''];
+    showTrivia(pair[0], pair[1]);
+  }
+}
+
+function showTrivia(pregunta, respuesta){
+  triviaArea.innerHTML = `
+    <p style="color:var(--accent); font-weight:700; margin-bottom:6px">PREGUNTA CLASIFICADA:</p>
+    <p style="color:#e6eef5; margin-bottom:8px">${pregunta}</p>
+    <button class="btn" id="show-answer-btn">VERIFICAR RESPUESTA (ALERTA ROJA)</button>
+    <p id="trivia-answer" style="color:#7ee787; font-weight:700; margin-top:8px; display:none;"></p>
+  `;
+
+  const btn = document.getElementById('show-answer-btn');
+  const ansEl = document.getElementById('trivia-answer');
+
+  const revealAnswer = (e) => {
+    e.preventDefault();
+    ansEl.textContent = 'RESPUESTA: ' + respuesta;
+    ansEl.style.display = 'block';
+    btn.style.display = 'none';
+  };
+
+  btn.addEventListener('click', revealAnswer);
+  btn.addEventListener('touchstart', revealAnswer);
+}
 
 window.addEventListener('load', renderTimeline);
-window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+window.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
