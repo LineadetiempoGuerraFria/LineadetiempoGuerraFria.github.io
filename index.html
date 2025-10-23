@@ -291,14 +291,14 @@ async function generateTrivia(){
   await new Promise(r=>setTimeout(r,400));
   const pair = localTriviaBank[yearKey] || [`Reflexiona sobre: ${eventTitle}`,''];
   triviaArea.innerHTML=`
-    <p style="color:var(--accent); font-weight:700; margin-bottom:6px">PREGUNTA CLASIFICADA:</p>
+    <p style="color:var(--accent); font-weight:700; margin-bottom:6px">Pregunta:</p>
     <p style="color:#e6eef5; margin-bottom:8px">${pair[0]}</p>
-    <button class="btn" id="show-answer-btn">VERIFICAR RESPUESTA</button>
+    <button class="btn" id="show-answer-btn">Comrpobar respuesta</button>
     <p id="trivia-answer" style="color:#7ee787; font-weight:700; margin-top:8px; display:none;"></p>
   `;
   document.getElementById('show-answer-btn').onclick=()=>{
     const ansEl=document.getElementById('trivia-answer');
-    ansEl.textContent='RESPUESTA: '+pair[1];
+    ansEl.textContent='Respuesta: '+pair[1];
     ansEl.style.display='block';
     document.getElementById('show-answer-btn').style.display='none';
   };
