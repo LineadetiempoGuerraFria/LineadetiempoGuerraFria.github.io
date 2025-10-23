@@ -23,7 +23,7 @@ body{
   padding:2rem;
 }
 
-header { text-align:center; margin-bottom:1rem; }
+header { text-align:center; margin-bottom:1rem; position:relative; }
 header h1{
   color:var(--accent);
   font-size:3.8rem;
@@ -32,6 +32,25 @@ header h1{
   letter-spacing:0.5px;
 }
 header p { color:var(--muted); margin:0; }
+
+/* 🎵 NUEVO: botón de música */
+.music-control {
+  position:absolute;
+  top:-50;
+  right:0;
+  background:var(--card);
+  border:1px solid rgba(255,255,255,0.05);
+  color:var(--accent);
+  padding:.4rem .8rem;
+  border-radius:.5rem;
+  cursor:pointer;
+  font-weight:700;
+  transition:all .2s ease;
+}
+.music-control:hover {
+  background:var(--accent);
+  color:white;
+}
 
 main#timeline-container{
   position:relative;
@@ -114,8 +133,8 @@ main#timeline-container{
   color:#e6eef5;
   box-shadow:0 12px 36px rgba(2,6,23,0.7);
   overflow:auto;
-  max-height:90vh; /* scrollable */
-  -webkit-overflow-scrolling: touch; /* smooth scroll en iOS */
+  max-height:90vh;
+  -webkit-overflow-scrolling: touch;
 }
 .modal-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
 .modal-title{ color:var(--accent); font-size:1.4rem; font-weight:700; margin-bottom:.25rem; display:flex; gap:.6rem; align-items:center; }
@@ -144,7 +163,16 @@ footer { text-align:center; color:var(--muted); margin-top:2rem; font-size:0.9re
 
 <header>
   <h1>🕊️⚔️☭ LÍNEA DE TIEMPO: GUERRA FRÍA 🦅🌎</h1>
+
+  <!-- 🎵 NUEVO: Control de música -->
+  <button id="musicToggle" class="music-control">🔊 Música</button>
 </header>
+
+<!-- 🎵 NUEVO: Elemento de audio oculto -->
+<audio id="bgMusic" loop autoplay>
+  <!-- Puedes cambiar esta URL por tu propia música -->
+  <source src="/Gustavo Dudamel_ Danzón N2 (Orquesta Sinfónica Simón Bolívar)  Lucerne Festival (27).mp3" type="audio/mpeg">
+</audio>
 
 <main id="timeline-container">
   <div class="timeline-line"></div>
@@ -176,6 +204,39 @@ footer { text-align:center; color:var(--muted); margin-top:2rem; font-size:0.9re
 </div>
 
 <script>
+// --- 🎵 NUEVO: control de música ---
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+
+bgMusic.volume = 0.6; // volumen inicial (ajusta si quieres)
+let isPlaying = !bgMusic.paused && !bgMusic.ended;
+let isMuted = bgMusic.muted || false;
+
+// inicializar texto del botón según estado
+musicToggle.textContent = isMuted ? '🔈 Silenciado' : (isPlaying ? '🔊 Música' : '🔇');
+
+musicToggle.addEventListener('click', () => {
+  if (bgMusic.paused) {
+    bgMusic.play().catch(()=>{}); // evitar error por autoplay
+    musicToggle.textContent = '🔊 Música';
+    isPlaying = true;
+  } else {
+    bgMusic.pause();
+    musicToggle.textContent = '🔇';
+    isPlaying = false;
+  }
+});
+
+// opción para silenciar con doble clic (evita listeners duplicados)
+musicToggle.addEventListener('dblclick', () => {
+  isMuted = !isMuted;
+  bgMusic.muted = isMuted;
+  musicToggle.textContent = isMuted ? '🔈 Silenciado' : (isPlaying ? '🔊 Música' : '🔇');
+});
+
+// 🔊 Asegurar reproducción automática (según navegador)
+
+
 const events = [
   {id:1, year:"1945", title:"Fin de la Segunda Guerra Mundial", description:"Tras la rendición de Alemania y Japón, el mundo quedó dominado por dos grandes potencias: Estados Unidos y la Unión Soviética. Las diferencias políticas y económicas entre ambos comenzaron a dibujar las zonas de influencia que darían paso al periodo llamado Guerra Fría.", videoUrl:"https://www.youtube.com/watch?v=I3DaaXP0VDA?si=xatJKBsY-fchsPVy", icon:"🌍"},
   {id:2, year:"1947", title:"Inicio de la Guerra Fría: Doctrina Truman", description:"En 1947 las tensiones se consolidaron: doctrinas, ayudas económicas y enfrentamientos indirectos marcaron la confrontación entre los bloques liderados por EE. UU. y la URSS. Ese mismo año, el presidente Harry S. Truman proclamó la Doctrina Truman, una política destinada a contener la expansión del comunismo mediante el apoyo económico y militar a los países amenazados por la influencia soviética.", videoUrl:"https://www.youtube.com/watch?v=ZHCH4DD5V2s?si=HqUeMKS3KEbobWLM", icon:"⚔️"},
@@ -281,7 +342,10 @@ function openModal(ev){
   modal.classList.add('open');
 }
 
-function closeModal(){ modal.classList.remove('open'); }
+function closeModal(){ 
+  modal.classList.remove('open'); 
+  modalVideoRoot.innerHTML = ''; 
+}
 
 async function generateTrivia(){
   triviaArea.innerHTML='<div class="loader"></div><p style="text-align:center; color:var(--muted); margin-top:.5rem;">Generando pregunta...</p>';
@@ -293,12 +357,12 @@ async function generateTrivia(){
   triviaArea.innerHTML=`
     <p style="color:var(--accent); font-weight:700; margin-bottom:6px">Pregunta:</p>
     <p style="color:#e6eef5; margin-bottom:8px">${pair[0]}</p>
-    <button class="btn" id="show-answer-btn">Comrpobar respuesta</button>
+    <button class="btn" id="show-answer-btn">Respuesta</button>
     <p id="trivia-answer" style="color:#7ee787; font-weight:700; margin-top:8px; display:none;"></p>
   `;
   document.getElementById('show-answer-btn').onclick=()=>{
     const ansEl=document.getElementById('trivia-answer');
-    ansEl.textContent='Respuesta: '+pair[1];
+    ansEl.textContent='RESPUESTA: '+pair[1];
     ansEl.style.display='block';
     document.getElementById('show-answer-btn').style.display='none';
   };
@@ -306,6 +370,7 @@ async function generateTrivia(){
 
 window.addEventListener('load', renderTimeline);
 window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeModal(); });
+
 </script>
 
 </body>
